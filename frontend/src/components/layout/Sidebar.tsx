@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MDSMLLogo } from "@/components/common/MDSMLLogo";
+import { ModeToggle } from "@/components/mode-toggle";
 
 // I'll create a simple 'cn' utility inline here if I can't check for it, but standard Next.js setups often have it.
 // Checking file structure earlier: src/lib exists. I should check if utils.ts is there. 
@@ -21,20 +22,56 @@ import { MDSMLLogo } from "@/components/common/MDSMLLogo";
 // The package.json has clsx and tailwind-merge.
 
 
-const navItems = [
+import { LucideIcon } from "lucide-react";
+
+interface NavItem {
+    name: string;
+    href: string;
+    icon: LucideIcon;
+    children?: { name: string; href: string }[];
+    locked?: boolean;
+    badge?: string;
+    collapsed?: boolean;
+}
+
+const navItems: NavItem[] = [
     { name: "Dashboard", href: "/", icon: LayoutDashboard },
     {
-        name: "Foundation", href: "/foundation", icon: BookOpen,
+        name: "Base Mathematics", href: "/foundation", icon: BookOpen,
         children: [
             { name: "Linear Algebra", href: "/foundation/linear-algebra" },
-            { name: "Probability & Statistics", href: "/foundation/probability" },
             { name: "Calculus & Optimization", href: "/foundation/calculus" },
-            { name: "Programming Foundations", href: "/foundation/programming" },
+            { name: "Stats & Probability", href: "/foundation/probability" },
+            { name: "Geometry & Topology", href: "/foundation/geometry" },
         ]
     },
-    { name: "Applied AI", href: "/applied-ai", icon: Dumbbell, collapsed: true },
-    { name: "Core AI", href: "/core-ai", icon: Search, locked: true },
-    { name: "Research Papers", href: "/research", icon: BookOpen, badge: "New" },
+    {
+        name: "Base Algorithms", href: "/algorithms", icon: Dumbbell,
+        children: [
+            { name: "Deterministic Ranking", href: "/algorithms/ranking-deterministic" },
+            { name: "Probabilistic Ranking", href: "/algorithms/ranking-probabilistic" },
+            { name: "Graph Algorithms", href: "/algorithms/graph" },
+            { name: "String Searching", href: "/algorithms/string" },
+        ]
+    },
+    {
+        name: "Base Theory", href: "/theory", icon: Search,
+        children: [
+            { name: "Crawling Theory", href: "/theory/crawling" },
+            { name: "Indexing Theory", href: "/theory/indexing" },
+            { name: "Querying Theory", href: "/theory/querying" },
+            { name: "Ranking Theory", href: "/theory/ranking" },
+        ]
+    },
+    {
+        name: "Expanded Topics", href: "/advanced", icon: BookOpen,
+        children: [
+            { name: "Quantum IR", href: "/advanced/quantum" },
+            { name: "Differential Privacy", href: "/advanced/privacy" },
+            { name: "Game Theory", href: "/advanced/game-theory" },
+        ]
+    },
+    { name: "Research Station", href: "/research", icon: Search },
 ];
 
 const bottomItems = [
@@ -57,8 +94,9 @@ export function Sidebar() {
                 <div className="space-y-1">
                     {navItems.map((item) => {
                         const isActive = pathname === item.href;
-                        // Handle Foundation specifically as it's expanded by default for this MVP
-                        const isExpanded = item.name === "Foundation";
+                        // Expand if path starts with item href (e.g. /foundation/..., /algorithms/...)
+                        // Using startsWith ensures sub-routes keep parent open
+                        const isExpanded = pathname.startsWith(item.href) && item.children;
 
                         return (
                             <div key={item.name}>
@@ -139,6 +177,9 @@ export function Sidebar() {
                             </Link>
                         );
                     })}
+                    <div className="px-3 pb-2">
+                        <ModeToggle />
+                    </div>
                     <button className="flex w-full items-center rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-error transition-all duration-200 group">
                         <LogOut className="mr-3 h-5 w-5 group-hover:text-error" />
                         Sign Out

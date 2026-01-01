@@ -1,22 +1,20 @@
 "use client";
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Play, RotateCw } from "lucide-react";
 
-export function CodingView({ onComplete }: { onComplete: () => void }) {
+interface CodingViewProps {
+    onComplete: () => void;
+    initialCode: string;
+}
+
+export function CodingView({ onComplete, initialCode }: CodingViewProps) {
+    const [code, setCode] = useState(initialCode);
     const [output, setOutput] = useState<string | null>(null);
     const [isRunning, setIsRunning] = useState(false);
 
-    const code = `import numpy as np
-
-# Define matrix A
-A = np.array([[3, 1], 
-              [1, 3]])
-
-# Calculate eigenvalues
-eigenvalues, eigenvectors = np.linalg.eig(A)
-
-print("Eigenvalues:", eigenvalues)`;
+    useEffect(() => {
+        setCode(initialCode);
+    }, [initialCode]);
 
     const handleRun = () => {
         setIsRunning(true);

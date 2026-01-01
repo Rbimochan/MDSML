@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BookOpen, Edit3, Terminal, CheckCircle, Video, StickyNote } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ConceptView } from "./ConceptView";
@@ -12,12 +12,31 @@ import { Note } from "@/types/note";
 
 type Tab = "concept" | "video" | "exercise" | "coding" | "notes";
 
+import { topicContents } from "@/data/topicContent";
+
 export function TopicViewer({ topicId }: { topicId: string }) {
     const [activeTab, setActiveTab] = useState<Tab>("concept");
     const [completedTabs, setCompletedTabs] = useState<Tab[]>([]);
     const [notes, setNotes] = useState<Note[]>([]);
-    // Default video: 3Blue1Brown Linear Algebra Preview
-    const [currentVideoUrl, setCurrentVideoUrl] = useState("https://www.youtube.com/watch?v=PFDu9oVAE-g");
+
+    // Get content for this topic, fallback to generic if not found
+    const content = topicContents[topicId] || topicContents["identifiers"] || {
+        id: "unknown",
+        title: "Topic Not Found",
+        concept: { title: "Not Found", content: "<p>Content not available.</p>" },
+        video: { url: "", title: "" },
+        coding: { initialCode: "# No content" }
+    };
+
+    const [currentVideoUrl, setCurrentVideoUrl] = useState(content.video.url || "https://www.youtube.com/watch?v=PFDu9oVAE-g");
+
+    // Update video URL if topic changes
+    useEffect(() => {
+        if (content.video.url) {
+            setCurrentVideoUrl(content.video.url);
+        }
+    }, [content.video.url]);
+
 
     const handleComplete = (tab: Tab) => {
         if (!completedTabs.includes(tab)) {
@@ -67,8 +86,8 @@ export function TopicViewer({ topicId }: { topicId: string }) {
             <div className="border-b border-border bg-background px-6 py-4">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-xl font-bold text-foreground">Eigenvalues & Eigenvectors</h1>
-                        <p className="text-sm text-muted-foreground">Linear Algebra • Module 3</p>
+                        <h1 className="text-xl font-bold text-foreground">{content.title}</h1>
+                        <p className="text-sm text-muted-foreground">Linear Algebra • Foundation</p>
                     </div>
 
                     <div className="flex rounded-lg bg-muted p-1">
@@ -104,7 +123,13 @@ export function TopicViewer({ topicId }: { topicId: string }) {
             <div className="flex-1 overflow-auto bg-muted/10 p-6">
                 <div className="mx-auto max-w-5xl rounded-xl border border-border bg-background shadow-sm h-full overflow-hidden flex flex-col">
                     <div className="flex-1 overflow-auto">
-                        {activeTab === "concept" && <ConceptView onComplete={() => handleComplete("concept")} />}
+                        {activeTab === "concept" && (
+                            <ConceptView
+                                title={content.concept.title}
+                                content={content.concept.content}
+                                onComplete={() => handleComplete("concept")}
+                            />
+                        )}
                         {activeTab === "video" && (
                             <VideoView
                                 videoUrl={currentVideoUrl}
@@ -114,7 +139,12 @@ export function TopicViewer({ topicId }: { topicId: string }) {
                             />
                         )}
                         {activeTab === "exercise" && <ExerciseView onComplete={() => handleComplete("exercise")} />}
-                        {activeTab === "coding" && <CodingView onComplete={() => handleComplete("coding")} />}
+                        {activeTab === "coding" && (
+                            <CodingView
+                                initialCode={content.coding.initialCode}
+                                onComplete={() => handleComplete("coding")}
+                            />
+                        )}
                         {activeTab === "notes" && <NotesView notes={notes} onAddNote={handleAddNote} onDeleteNote={handleDeleteNote} />}
                     </div>
                 </div>
