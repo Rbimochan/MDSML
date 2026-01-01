@@ -1,0 +1,62 @@
+INFO:     Will watch for changes in these directories: ['/Users/bimochanrajkunwar/Desktop/MDSML/backend']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [59197] using WatchFiles
+INFO:     Started server process [59252]
+INFO:     Waiting for application startup.
+ERROR:    Traceback (most recent call last):
+  File "/Users/bimochanrajkunwar/Desktop/MDSML/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 694, in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+               ~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bimochanrajkunwar/Desktop/MDSML/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bimochanrajkunwar/Desktop/MDSML/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bimochanrajkunwar/Desktop/MDSML/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bimochanrajkunwar/Desktop/MDSML/backend/venv/lib/python3.14/site-packages/fastapi/routing.py", line 153, in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ~~~~~~~~~~~~~~~~^^^^^
+  File "/Users/bimochanrajkunwar/Desktop/MDSML/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 571, in __aenter__
+    await self._router.startup()
+  File "/Users/bimochanrajkunwar/Desktop/MDSML/backend/venv/lib/python3.14/site-packages/starlette/routing.py", line 671, in startup
+    await handler()
+  File "/Users/bimochanrajkunwar/Desktop/MDSML/backend/app/main.py", line 27, in startup
+    async with engine.begin() as conn:
+               ~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py", line 214, in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bimochanrajkunwar/Desktop/MDSML/backend/venv/lib/python3.14/site-packages/sqlalchemy/ext/asyncio/engine.py", line 1068, in begin
+    async with conn:
+               ^^^^
+  File "/Users/bimochanrajkunwar/Desktop/MDSML/backend/venv/lib/python3.14/site-packages/sqlalchemy/ext/asyncio/base.py", line 121, in __aenter__
+    return await self.start(is_ctxmanager=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bimochanrajkunwar/Desktop/MDSML/backend/venv/lib/python3.14/site-packages/sqlalchemy/ext/asyncio/engine.py", line 275, in start
+    await greenlet_spawn(self.sync_engine.connect)
+          ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/bimochanrajkunwar/Desktop/MDSML/backend/venv/lib/python3.14/site-packages/sqlalchemy/util/concurrency.py", line 101, in greenlet_spawn
+    _not_implemented()
+    ~~~~~~~~~~~~~~~~^^
+  File "/Users/bimochanrajkunwar/Desktop/MDSML/backend/venv/lib/python3.14/site-packages/sqlalchemy/util/concurrency.py", line 81, in _not_implemented
+    raise ValueError(
+    ...<4 lines>...
+    )
+ValueError: the greenlet library is required to use this function. No module named 'greenlet'
+
+ERROR:    Application startup failed. Exiting.

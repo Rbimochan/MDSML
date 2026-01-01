@@ -32,7 +32,7 @@ export function AiAssistant() {
         scrollToBottom();
     }, [messages]);
 
-    const handleSend = () => {
+    const handleSend = async () => {
         if (!inputValue.trim()) return;
 
         const updatedMessages: Message[] = [

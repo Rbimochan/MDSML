@@ -1,0 +1,39 @@
+
+> frontend@0.1.0 dev
+> next dev
+
+▲ Next.js 16.1.1 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.129:3000
+
+✓ Starting...
+✓ Ready in 579ms
+ GET / 200 in 592ms (compile: 521ms, render: 71ms)
+ GET /foundation 200 in 66ms (compile: 56ms, render: 10ms)
+ GET /algorithms 200 in 57ms (compile: 47ms, render: 10ms)
+ GET /theory 200 in 58ms (compile: 49ms, render: 8ms)
+ GET /advanced 200 in 44ms (compile: 35ms, render: 9ms)
+ GET / 200 in 18ms (compile: 4ms, render: 14ms)
+ GET / 200 in 18ms (compile: 3ms, render: 15ms)
+ GET /foundation 200 in 22ms (compile: 4ms, render: 19ms)
+ GET /foundation/linear-algebra 200 in 58ms (compile: 50ms, render: 8ms)
+ GET /foundation/linear-algebra/scalars-vectors-matrices 200 in 231ms (compile: 223ms, render: 8ms)
+ GET /foundation/linear-algebra 200 in 90ms (compile: 12ms, render: 78ms)
+ GET /theory 200 in 26ms (compile: 5ms, render: 21ms)
+ GET /advanced 200 in 22ms (compile: 5ms, render: 17ms)
+ GET /research 200 in 86ms (compile: 79ms, render: 6ms)
+ GET /settings 404 in 58ms (compile: 50ms, render: 9ms)
+ GET /settings 404 in 25ms (compile: 4ms, render: 21ms)
+ GET /research 200 in 70ms (compile: 7ms, render: 63ms)
+ GET / 200 in 21ms (compile: 7ms, render: 14ms)
+ GET / 200 in 20ms (compile: 4ms, render: 15ms)
+ GET /modules/eigenvectors 404 in 22ms (compile: 6ms, render: 17ms)
+ GET /modules/eigenvectors 404 in 27ms (compile: 3ms, render: 24ms)
+ GET / 200 in 41ms (compile: 5ms, render: 37ms)
+ GET /foundation 200 in 25ms (compile: 6ms, render: 19ms)
+ GET /foundation/linear-algebra 200 in 23ms (compile: 5ms, render: 18ms)
+ GET /foundation/linear-algebra/vector-spaces 200 in 29ms (compile: 12ms, render: 18ms)
+ GET /foundation/linear-algebra/scalars-vectors-matrices 200 in 24ms (compile: 7ms, render: 17ms)
+ GET /foundation/linear-algebra 200 in 16ms (compile: 4ms, render: 12ms)
+ GET /foundation/linear-algebra/linear-independence 200 in 25ms (compile: 6ms, render: 19ms)
+ GET /theory 200 in 22ms (compile: 5ms, render: 17ms)
