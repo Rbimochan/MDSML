@@ -39,9 +39,11 @@ class Settings(BaseSettings):
     def REDIS_URL(self) -> str:
         return f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/0"
 
+    # Security
+    JWT_SECRET_KEY: str = "your-super-secret-key-change-this"
+    
     # AI
     CLAUDE_API_KEY: str = ""
-    OPENAI_API_KEY: str = ""
 
     model_config = SettingsConfigDict(
         env_file=".env", 

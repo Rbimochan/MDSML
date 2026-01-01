@@ -1,6 +1,12 @@
 import { TrendingUp, Award, MoreHorizontal } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+interface MasterySidebarProps {
+  points?: number;
+  streak?: number;
+  mastery?: number;
+}
+
 // Simple Progress Ring Component
 const ProgressRing = ({
     percent,
@@ -53,7 +59,7 @@ const ProgressRing = ({
     );
 };
 
-export function MasterySidebar() {
+export function MasterySidebar({ points = 0, streak = 0, mastery = 0 }: MasterySidebarProps) {
     return (
         <div className="space-y-6">
             <div className="rounded-2xl border border-border bg-background p-5 shadow-sm">

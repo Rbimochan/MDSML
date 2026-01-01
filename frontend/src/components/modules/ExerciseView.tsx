@@ -3,18 +3,53 @@
 import { useState } from "react";
 import { ArrowRight, CheckCircle2, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { apiClient } from "@/lib/api";
 
-export function ExerciseView({ onComplete }: { onComplete: () => void }) {
+interface ExerciseViewProps {
+  onComplete: () => void;
+  problemId?: string;
+  correctAnswer?: string;
+}
+
+export function ExerciseView({ onComplete, problemId, correctAnswer = "4" }: ExerciseViewProps) {
     const [answer, setAnswer] = useState("");
-    const [status, setStatus] = useState<"idle" | "correct" | "incorrect">("idle");
+    const [status, setStatus] = useState<"idle" | "correct" | "incorrect" | "loading">("idle");
+    const [feedback, setFeedback] = useState<string>("");
 
-    const handleSubmit = () => {
-        // Mock validation for λ = 4
-        if (answer.trim() === "4") {
-            setStatus("correct");
-            onComplete();
+    const handleSubmit = async () => {
+        if (!answer.trim()) {
+            setFeedback("Please enter an answer");
+            return;
+        }
+
+        setStatus("loading");
+
+        if (problemId) {
+            try {
+                const result = await apiClient.submitProblem(problemId, undefined, answer.trim());
+                
+                if (result.is_correct) {
+                    setStatus("correct");
+                    setFeedback(result.feedback || "Correct! Great job!");
+                    setTimeout(onComplete, 1500);
+                } else {
+                    setStatus("incorrect");
+                    setFeedback(result.feedback || "Not quite right. Try again!");
+                }
+            } catch (error: any) {
+                setStatus("incorrect");
+                setFeedback(error.detail || "Error submitting answer");
+            }
         } else {
-            setStatus("incorrect");
+            // Fallback: mock validation
+            if (answer.trim() === correctAnswer) {
+                setStatus("correct");
+                setFeedback(`Correct! The answer is ${correctAnswer}.`);
+                setTimeout(onComplete, 1500);
+            } else {
+                setStatus("incorrect");
+                setFeedback("Incorrect. Try setting up the characteristic equation.");
+            }
         }
     };
 
@@ -46,32 +81,34 @@ export function ExerciseView({ onComplete }: { onComplete: () => void }) {
                                 type="text"
                                 value={answer}
                                 onChange={(e) => setAnswer(e.target.value)}
+                                disabled={status === "loading"}
                                 placeholder="Enter value..."
                                 className={cn(
                                     "flex h-12 w-full rounded-md border text-lg px-4 bg-background transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20",
-                                    status === "incorrect" ? "border-error text-error focus:border-error" : "border-input confirm-border-primary",
+                                    status === "incorrect" ? "border-error text-error focus:border-error" : "border-input",
                                     status === "correct" ? "border-success text-success bg-success/5" : ""
                                 )}
                             />
                             <button
                                 onClick={handleSubmit}
-                                className="rounded-md bg-primary px-6 font-semibold text-primary-foreground hover:bg-primary/90"
+                                disabled={status === "loading" || !answer}
+                                className="rounded-md bg-primary px-6 font-semibold text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
                             >
-                                Check
+                                {status === "loading" ? "..." : "Check"}
                             </button>
                         </div>
 
-                        {status === "correct" && (
-                            <div className="flex items-center gap-2 text-success animate-in fade-in slide-in-from-top-2">
-                                <CheckCircle2 className="h-5 w-5" />
-                                <span className="font-medium">Correct! The eigenvalues are 4 and 2.</span>
-                            </div>
-                        )}
-
-                        {status === "incorrect" && (
-                            <div className="flex items-center gap-2 text-error animate-in fade-in slide-in-from-top-2">
-                                <XCircle className="h-5 w-5" />
-                                <span className="font-medium">Incorrect. Try setting up the characteristic equation.</span>
+                        {feedback && (
+                            <div className={cn(
+                                "flex items-center gap-2 animate-in fade-in slide-in-from-top-2",
+                                status === "correct" ? "text-success" : "text-error"
+                            )}>
+                                {status === "correct" ? (
+                                    <CheckCircle2 className="h-5 w-5" />
+                                ) : (
+                                    <XCircle className="h-5 w-5" />
+                                )}
+                                <span className="font-medium">{feedback}</span>
                             </div>
                         )}
                     </div>

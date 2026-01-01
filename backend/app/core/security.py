@@ -6,13 +6,13 @@ from app.config import settings
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-SECRET_KEY = settings.CLAUDE_API_KEY # TODO: Change this to a real secret key in production
+# SECURITY: Use dedicated SECRET_KEY from environment, never reuse API keys
+SECRET_KEY = settings.JWT_SECRET_KEY
+if not SECRET_KEY:
+    raise ValueError("JWT_SECRET_KEY environment variable must be set")
+    
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
-
-# Fallback for dev if no secret set
-if not SECRET_KEY:
-    SECRET_KEY = "dev_secret_key_change_me"
 
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)

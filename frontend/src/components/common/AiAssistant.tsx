@@ -48,15 +48,41 @@ export function AiAssistant() {
         setMessages(updatedMessages);
         setInputValue("");
 
-        // Mock Bot Response
-        setTimeout(() => {
-            const botResponses = [
-                "That's a great question about eigenvalues!",
-                "Try visualizing the transformation matrix.",
-                "Have you checked the concept video in the module?",
-                "I can explain SVD in more detail if you like."
+        // Call backend Claude API for intelligent response
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'}/api/v1/ai/chat`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${typeof window !== 'undefined' ? localStorage.getItem('access_token') : ''}`
+                },
+                body: JSON.stringify({
+                    message: inputValue,
+                    context: "learning_math_ml"
+                })
+            });
+
+            const data = await response.json();
+            const botResponse = data.response || "I'm here to help! Feel free to ask me anything about your learning journey.";
+
+            setMessages(prev => [
+                ...prev,
+                {
+                    id: (Date.now() + 1).toString(),
+                    text: botResponse,
+                    sender: "bot",
+                    timestamp: new Date()
+                }
+            ]);
+        } catch (error) {
+            // Fallback to helpful suggestions if API fails
+            const suggestions = [
+                "That's a great question! Let me think about it. You might want to review the concept video to deepen your understanding.",
+                "Interesting point! Try working through a related problem to strengthen your grasp of this concept.",
+                "Have you considered visualizing this concept? Drawing it out often helps with understanding.",
+                "I can help with that! Focus on the foundational concepts first, then build up to more complex applications."
             ];
-            const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
+            const randomResponse = suggestions[Math.floor(Math.random() * suggestions.length)];
 
             setMessages(prev => [
                 ...prev,
@@ -67,7 +93,7 @@ export function AiAssistant() {
                     timestamp: new Date()
                 }
             ]);
-        }, 1000);
+        }
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
-from app.api import auth, users
+from app.api import auth, users, courses, ai
 from app.models.db import engine, Base
 
 app = FastAPI(
@@ -29,6 +29,8 @@ async def startup():
 
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])
 app.include_router(users.router, prefix=f"{settings.API_V1_STR}/users", tags=["users"])
+app.include_router(courses.router, prefix=f"{settings.API_V1_STR}/courses", tags=["courses"])
+app.include_router(ai.router, prefix=f"{settings.API_V1_STR}", tags=["ai"])
 
 @app.get("/")
 async def root():

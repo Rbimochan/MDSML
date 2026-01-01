@@ -1,29 +1,58 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Play, RotateCw } from "lucide-react";
+import { Play, RotateCw, Check } from "lucide-react";
+import { apiClient } from "@/lib/api";
 
 interface CodingViewProps {
     onComplete: () => void;
     initialCode: string;
+    problemId?: string;
+    solution?: string;
 }
 
-export function CodingView({ onComplete, initialCode }: CodingViewProps) {
+export function CodingView({ onComplete, initialCode, problemId, solution }: CodingViewProps) {
     const [code, setCode] = useState(initialCode);
     const [output, setOutput] = useState<string | null>(null);
     const [isRunning, setIsRunning] = useState(false);
+    const [isCorrect, setIsCorrect] = useState(false);
+    const [feedback, setFeedback] = useState<string | null>(null);
 
     useEffect(() => {
         setCode(initialCode);
     }, [initialCode]);
 
-    const handleRun = () => {
+    const handleRun = async () => {
         setIsRunning(true);
-        // Simulate execution delay
+        setOutput(null);
+        setFeedback(null);
+        
+        // Simulate execution
         setTimeout(() => {
             setOutput("Eigenvalues: [4. 2.]");
             setIsRunning(false);
-            onComplete();
         }, 1500);
+    };
+
+    const handleSubmit = async () => {
+        if (!problemId) {
+            setFeedback("Problem ID not found");
+            return;
+        }
+
+        setIsRunning(true);
+        try {
+            const result = await apiClient.submitProblem(problemId, code);
+            setIsCorrect(result.is_correct);
+            setFeedback(result.feedback);
+            
+            if (result.is_correct) {
+                setTimeout(onComplete, 1000);
+            }
+        } catch (error: any) {
+            setFeedback(error.detail || "Submission failed. Try again.");
+        } finally {
+            setIsRunning(false);
+        }
     };
 
     return (
@@ -32,36 +61,55 @@ export function CodingView({ onComplete, initialCode }: CodingViewProps) {
             <div className="flex-1 flex flex-col border-r border-border">
                 <div className="flex items-center justify-between border-b border-border bg-muted/20 px-4 py-2">
                     <span className="text-xs font-medium text-muted-foreground">main.py</span>
-                    <button
-                        onClick={handleRun}
-                        disabled={isRunning}
-                        className="flex items-center gap-2 rounded-md bg-success/10 px-3 py-1.5 text-xs font-semibold text-success hover:bg-success/20 disabled:opacity-50 transition-colors"
-                    >
-                        {isRunning ? <RotateCw className="h-3 w-3 animate-spin" /> : <Play className="h-3 w-3 fill-current" />}
-                        Run Code
-                    </button>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={handleRun}
+                            disabled={isRunning}
+                            className="flex items-center gap-2 rounded-md bg-blue-500/10 px-3 py-1.5 text-xs font-semibold text-blue-500 hover:bg-blue-500/20 disabled:opacity-50 transition-colors"
+                        >
+                            {isRunning ? <RotateCw className="h-3 w-3 animate-spin" /> : <Play className="h-3 w-3 fill-current" />}
+                            Run
+                        </button>
+                        <button
+                            onClick={handleSubmit}
+                            disabled={isRunning || !code}
+                            className="flex items-center gap-2 rounded-md bg-success/10 px-3 py-1.5 text-xs font-semibold text-success hover:bg-success/20 disabled:opacity-50 transition-colors"
+                        >
+                            <Check className="h-3 w-3" />
+                            Submit
+                        </button>
+                    </div>
                 </div>
-                <div className="flex-1 bg-[#1e1e1e] p-4 font-mono text-sm text-gray-300">
-                    <pre className="whitespace-pre-wrap">{code}</pre>
-                    {/* In a real app, integrate Monaco Editor here */}
+                <div className="flex-1 bg-[#1e1e1e] p-4 font-mono text-sm text-gray-300 overflow-auto">
+                    <textarea 
+                        value={code}
+                        onChange={(e) => setCode(e.target.value)}
+                        className="w-full h-full bg-transparent text-gray-300 resize-none focus:outline-none font-mono"
+                    />
                 </div>
             </div>
 
             {/* Output Panel */}
             <div className="w-full lg:w-1/3 flex flex-col bg-[#0d0d0d]">
                 <div className="border-b border-border/10 bg-muted/5 px-4 py-2">
-                    <span className="text-xs font-medium text-muted-foreground">Console Output</span>
+                    <span className="text-xs font-medium text-muted-foreground">Feedback</span>
                 </div>
-                <div className="flex-1 p-4 font-mono text-sm">
-                    {output ? (
+                <div className="flex-1 p-4 font-mono text-sm overflow-auto">
+                    {feedback && (
+                        <div className={`${isCorrect ? "text-success" : "text-warning"} animate-in fade-in duration-300 whitespace-pre-wrap`}>
+                            {feedback}
+                        </div>
+                    )}
+                    {output && !feedback && (
                         <div className="text-success animate-in fade-in duration-300">
                             <span className="text-muted-foreground">$ python main.py</span>
                             <br />
                             {output}
                         </div>
-                    ) : (
+                    )}
+                    {!output && !feedback && (
                         <div className="text-muted-foreground/50 italic">
-                            Run the code to see output...
+                            Run code or submit your solution...
                         </div>
                     )}
                 </div>
